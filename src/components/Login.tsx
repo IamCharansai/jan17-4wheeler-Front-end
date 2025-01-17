@@ -1,13 +1,18 @@
+
 //import React from 'react'
 
 import { FormEvent, useState } from "react";
 import "../css/login.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
 
+const myNav = useNavigate();   
+
     const [userName,setUserName] = useState('');
     const [password,setPassword] = useState('');
+    const [errorMes,setErrorMes] = useState('');
 
 
     const goToHome = (e:FormEvent)=>{
@@ -18,8 +23,18 @@ export default function Login() {
         console.log("password---->"+password);
 
 axios.get(
-"http://localhost:9090/four-wheeler/user/isValidUser?uName="+userName
-+"&password="+password);
+"http://localhost:8080/four-wheeler/user/isValidUser?uName="+userName
++"&password="+password).then(
+    (res)=>{
+        console.log("from spring boot app--->"+res.data);
+        if(res.data == true){
+            myNav("/home");
+        }
+        else{
+            setErrorMes("Crendentials are not correct!!!!");
+        }
+    }
+);
 
     };
   return (
@@ -38,6 +53,7 @@ axios.get(
             </div>
             <div className="d-flex justify-content-center form_container">
               <form onSubmit={goToHome}>
+                {errorMes}
                 <div className="input-group mb-3">
                   <div className="input-group-append">
                     <span className="input-group-text">
